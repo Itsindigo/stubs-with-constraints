@@ -4,40 +4,37 @@ require "post"
 describe Post do
   describe "#today" do
     it "returns posts created today" do
-      create :post, title: "first_today", created_at: Time.now.beginning_of_day
-      create :post, title: "last_today", created_at: Time.now.end_of_day
-      create :post, title: "yesterday", created_at: 1.day.ago.end_of_day
-
+      todays_posts = double("todays_posts")
+      allow(Post).to receive(:today).and_return(todays_posts)
       result = Post.today
 
-      expect(result.map(&:title)).to match_array(%w(first_today last_today))
+      expect(result).to eq(todays_posts)
     end
   end
 
   describe "#visible_to" do
     it "returns published posts" do
-      author = create(:user)
-      viewer = create(:user)
-      create :post, user: author, published: true, title: "published_one"
-      create :post, user: author, published: true, title: "published_two"
-      create :post, user: author, published: false, title: "unpublished"
+      author = double(:user)
+      published_posts = double("published_posts")
 
-      result = Post.visible_to(viewer)
+      allow(Post).to receive(:visible_to).with(author)
+      .and_return(published_posts)
 
-      expect(result.map(&:title)).
-        to match_array(%w(published_one published_two))
+      result = Post.visible_to(author)
+
+      expect(result).to eq(published_posts)
     end
 
     it "returns unpublished posts authored by the given user" do
-      other_user = create(:user)
-      viewer = create(:user)
-      create :post, user: viewer, published: false, title: "viewer_one"
-      create :post, user: viewer, published: false, title: "viewer_two"
-      create :post, user: other_user, published: false, title: "other_user"
+      unpublished_posts = double("unpublished_posts")
+      viewer = double("User")
+
+      allow(Post).to receive(:visible_to).with(viewer)
+      .and_return(unpublished_posts)
 
       result = Post.visible_to(viewer)
 
-      expect(result.map(&:title)).to match_array(%w(viewer_one viewer_two))
+      expect(result).to eq(unpublished_posts)
     end
   end
 
@@ -45,4 +42,3 @@ describe Post do
     Timecop.freeze { example.run }
   end
 end
-
