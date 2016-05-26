@@ -4,7 +4,7 @@ require "post"
 describe Post do
   describe "#today" do
     it "returns posts created today" do
-      todays_posts = double("todays_posts")
+      todays_posts = Post.new
       allow(Post).to receive(:today).and_return(todays_posts)
       result = Post.today
 
@@ -15,7 +15,7 @@ describe Post do
   describe "#visible_to" do
     it "returns published posts" do
       author = double(:user)
-      published_posts = double("published_posts")
+      published_posts = Post.new
 
       allow(Post).to receive(:visible_to).with(author)
       .and_return(published_posts)
@@ -26,7 +26,7 @@ describe Post do
     end
 
     it "returns unpublished posts authored by the given user" do
-      unpublished_posts = double("unpublished_posts")
+      unpublished_posts = double("posts")
       viewer = double("User")
 
       allow(Post).to receive(:visible_to).with(viewer)
