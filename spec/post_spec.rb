@@ -4,7 +4,7 @@ require "post"
 describe Post do
   describe "#today" do
     it "returns posts created today" do
-      todays_posts = double("todays_posts")
+      todays_posts = Post.new
       allow(Post).to receive(:today).and_return(todays_posts)
       result = Post.today
 
